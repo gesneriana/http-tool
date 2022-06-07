@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -40,16 +42,34 @@ func main() {
 	}
 	client.Transport = tgTransport
 
-	resp, err := client.Get(os.Args[2])
-	if err != nil {
-		log.Printf("http request err: %s\n", err.Error())
-		return
+	var urlSlice = strings.Split(os.Args[2], ",")
+	var dataSlice []*DNSQuery // 返回的DNS查询结果列表
+
+	for _, urlString := range urlSlice {
+		resp, err := client.Get(urlString)
+		if err != nil {
+			log.Printf("http request err: %s\n", err.Error())
+			continue
+		}
+
+		data, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Printf("http request read body err: %s\n", err.Error())
+			continue
+		}
+		dns := &DNSQuery{}
+		err = json.Unmarshal(data, dns)
+		if err != nil {
+			log.Printf("json Unmarshal body err: %s\n", err.Error())
+			continue
+		}
+		dataSlice = append(dataSlice, dns)
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := json.Marshal(dataSlice)
 	if err != nil {
-		log.Printf("http request read body err: %s\n", err.Error())
-		return
+		log.Printf("json Marshal err: %s\n", err.Error())
 	}
-	fmt.Println(string(data))
+	uEnc := base64.URLEncoding.EncodeToString(data)
+	fmt.Println(uEnc)
 }

@@ -1,0 +1,6 @@
+/.idea/.gitignore
+/.idea/http-tool.iml
+/.idea/modules.xml
+/.idea/vcs.xml
+/go.sum
+/http-tool.exe
