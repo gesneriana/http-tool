@@ -98,7 +98,10 @@ func main() {
 
 		var urlMap = make(map[string]string, 0)
 		for _, proxies := range clashConfig.Proxies {
-			urlMap[proxies.Server] = ""
+			address := net.ParseIP(proxies.Server)
+			if address == nil && len(proxies.Server) > 0 {
+				urlMap[proxies.Server] = "" // 当 proxies.Server 是一个域名的时候才会尝试去解析
+			}
 		}
 
 		for key := range urlMap {
