@@ -67,7 +67,7 @@ func main() {
 			dns := &DNSQuery{}
 			err = json.Unmarshal(data, dns)
 			if err != nil {
-				log.Printf("json Unmarshal body err: %s\n", err.Error())
+				log.Printf("json Unmarshal body err: %s\n%s", err.Error(), string(data))
 				continue
 			}
 			dataSlice = append(dataSlice, dns)
@@ -118,7 +118,7 @@ func main() {
 			dns := &DNSQuery{}
 			err = json.Unmarshal(respData, dns)
 			if err != nil {
-				log.Printf("json Unmarshal body err: %s\n", err.Error())
+				log.Printf("json Unmarshal body err: %s\n%s", err.Error(), string(respData))
 				continue
 			}
 
@@ -128,7 +128,7 @@ func main() {
 		}
 
 		for _, proxies := range clashConfig.Proxies {
-			if ip, ok := urlMap[proxies.Server]; ok {
+			if ip, ok := urlMap[proxies.Server]; ok && len(ip) > 0 {
 				proxies.Server = ip
 			}
 		}
