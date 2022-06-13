@@ -104,6 +104,11 @@ func main() {
 			}
 		}
 
+		if len(urlMap) == 0 {
+			log.Println("urlMap no data.")
+			return
+		}
+
 		for key := range urlMap {
 			var urlString = fmt.Sprintf("https://dns.google/resolve?name=%s&type=A", key)
 			resp, err := client.Get(urlString)
