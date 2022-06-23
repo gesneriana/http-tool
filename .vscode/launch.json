@@ -12,7 +12,8 @@
             "program": "${fileDirname}",
             "args": [
                 "socks5://127.0.0.1:10808",
-                "https://dns.google/resolve?name=apn-a.point.mysynology.net&type=A,https://dns.google/resolve?name=apn-b.point.mysynology.net&type=A"
+                "./1648344450873.yml",
+                "wait=10"
             ]
         }
     ]

@@ -12,7 +12,9 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 
 	"gopkg.in/yaml.v3"
 
@@ -83,6 +85,31 @@ func main() {
 		uEnc := base64.URLEncoding.EncodeToString(data)
 		fmt.Println(uEnc)
 	} else if strings.HasSuffix(paramString, ".yml") {
+
+		if len(os.Args) > 3 {
+			var cmdArg = make(map[string]string, 0)
+			var extArgs = os.Args[3:]
+			for _, arg := range extArgs {
+				if strings.Count(arg, "=") == 1 {
+					argSlice := strings.Split(arg, "=")
+					cmdArg[argSlice[0]] = argSlice[1]
+				}
+			}
+
+			for k, v := range cmdArg {
+				if k == "wait" {
+					sec, err := strconv.Atoi(v)
+					if err != nil {
+						log.Printf("wait command err: %s\n", err.Error())
+						continue
+					}
+					if sec < 10 {
+						sec = 10
+					}
+					time.Sleep(time.Second * time.Duration(sec)) // 添加更多用法，等待一段时间，等clash启动成功并且开启代理再去更新配置文件
+				}
+			}
+		}
 		readFileData, err := ioutil.ReadFile(paramString)
 		if err != nil {
 			log.Printf("ioutil ReadFile %s err: %s\n", paramString, err.Error())
