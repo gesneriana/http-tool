@@ -28,7 +28,7 @@ jobs:
         go-version: 1.18
 
     - name: Build
-      run: go mod tidy & go build -ldflags "-w -s" & CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build main.go
+      run: go build -ldflags "-w -s" *.go & CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build *.go
 
     - name: Test
       run: go test -v ./...
