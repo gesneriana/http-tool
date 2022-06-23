@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"gopkg.in/yaml.v3"
+	"http-tool/model"
 	"io/ioutil"
 	"log"
 	"net"
@@ -13,6 +13,8 @@ import (
 	"net/url"
 	"os"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 
 	"github.com/hashicorp/go.net/proxy"
 )
@@ -49,7 +51,7 @@ func main() {
 
 	if strings.HasPrefix(paramString, "https") {
 		var urlSlice = strings.Split(paramString, ",")
-		var dataSlice []*DNSQuery // 返回的DNS查询结果列表
+		var dataSlice []*model.DNSQuery // 返回的DNS查询结果列表
 
 		for _, urlString := range urlSlice {
 			resp, err := client.Get(urlString)
@@ -64,7 +66,7 @@ func main() {
 				continue
 			}
 			_ = resp.Body.Close()
-			dns := &DNSQuery{}
+			dns := &model.DNSQuery{}
 			err = json.Unmarshal(data, dns)
 			if err != nil {
 				log.Printf("json Unmarshal body err: %s\n%s", err.Error(), string(data))
@@ -85,7 +87,7 @@ func main() {
 		if err != nil {
 			log.Printf("ioutil ReadFile %s err: %s\n", paramString, err.Error())
 		}
-		var clashConfig = &ClashConfig{}
+		var clashConfig = &model.ClashConfig{}
 		err = yaml.Unmarshal(readFileData, clashConfig)
 		if err != nil {
 			log.Printf("yaml Unmarshal %s err: %s\n", string(readFileData), err.Error())
@@ -123,7 +125,7 @@ func main() {
 				continue
 			}
 			_ = resp.Body.Close()
-			dns := &DNSQuery{}
+			dns := &model.DNSQuery{}
 			err = json.Unmarshal(respData, dns)
 			if err != nil {
 				log.Printf("json Unmarshal body err: %s\n%s", err.Error(), string(respData))

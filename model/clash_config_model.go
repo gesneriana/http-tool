@@ -1,4 +1,4 @@
-package main
+package model
 
 type ClashConfig struct {
 	Port               int    `yaml:"port"`
