@@ -28,7 +28,14 @@ jobs:
         go-version: 1.18
 
     - name: Build
-      run: go build -ldflags "-w -s" *.go & CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build *.go
+      run: go build -ldflags "-w -s" *.go -o ./bin/http-tool & CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build *.go ./bin/http-tool.exe
+      
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: http-tool
+        path: ./bin
+
 
     - name: Test
       run: go test -v ./...
