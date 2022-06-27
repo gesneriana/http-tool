@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"http-tool/model"
+	"http-tool/utils"
 	"io/ioutil"
 	"log"
 	"net"
@@ -124,6 +125,33 @@ func main() {
 			log.Println("clashConfig.Proxies no data.")
 			return
 		}
+
+		// 插入clash规则
+		func() {
+			rulesFilePath := "./clash-rules.txt"
+			if utils.PathExists(rulesFilePath) {
+				rulesFileData, err := ioutil.ReadFile(rulesFilePath)
+				if err != nil {
+					log.Printf("ioutil ReadFile %s err: %s\n", rulesFilePath, err.Error())
+					return
+				}
+				if len(rulesFileData) == 0 {
+					return
+				}
+				var ruleText = string(rulesFileData)
+				var ruleSlice = strings.Split(ruleText, "\n")
+				var insertRuleMap = make(map[string]struct{}, 0)
+				for _, rule := range ruleSlice {
+					insertRuleMap[strings.Trim(rule, "\r")] = struct{}{}
+				}
+				for _, rule := range clashConfig.Rules {
+					delete(insertRuleMap, rule) // 如果已经存在了，去掉
+				}
+				for rule, _ := range insertRuleMap {
+					clashConfig.Rules = append([]string{rule}, clashConfig.Rules...) // 追加到前面
+				}
+			}
+		}()
 
 		var urlMap = make(map[string]string, 0)
 		for _, proxies := range clashConfig.Proxies {
